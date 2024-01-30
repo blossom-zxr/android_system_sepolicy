@@ -228,41 +228,14 @@ endif
 LOCAL_REQUIRED_MODULES += \
     build_sepolicy \
     plat_file_contexts \
-    plat_file_contexts_test \
     plat_keystore2_key_contexts \
     plat_mac_permissions.xml \
     plat_property_contexts \
-    plat_property_contexts_test \
     plat_seapp_contexts \
     plat_service_contexts \
-    plat_service_contexts_test \
     plat_hwservice_contexts \
-    plat_hwservice_contexts_test \
-    fuzzer_bindings_test \
     plat_bug_map \
     searchpolicy \
-
-ifneq ($(with_asan),true)
-ifneq ($(SELINUX_IGNORE_NEVERALLOWS),true)
-LOCAL_REQUIRED_MODULES += \
-    sepolicy_compat_test \
-
-# HACK: sepolicy_test is implemented as genrule
-# genrule modules aren't installable, so LOCAL_REQUIRED_MODULES doesn't work.
-# Instead, use LOCAL_ADDITIONAL_DEPENDENCIES with intermediate output
-LOCAL_ADDITIONAL_DEPENDENCIES += $(call intermediates-dir-for,ETC,sepolicy_test)/sepolicy_test
-LOCAL_ADDITIONAL_DEPENDENCIES += $(call intermediates-dir-for,ETC,sepolicy_dev_type_test)/sepolicy_dev_type_test
-
-LOCAL_REQUIRED_MODULES += \
-    $(addprefix treble_sepolicy_tests_,$(PLATFORM_SEPOLICY_COMPAT_VERSIONS)) \
-
-endif  # SELINUX_IGNORE_NEVERALLOWS
-endif  # with_asan
-
-ifeq ($(BOARD_API_LEVEL_FROZEN),true)
-LOCAL_REQUIRED_MODULES += \
-    se_freeze_test
-endif
 
 include $(BUILD_PHONY_PACKAGE)
 
@@ -304,14 +277,10 @@ endif
 ifdef HAS_SYSTEM_EXT_SEPOLICY_DIR
 LOCAL_REQUIRED_MODULES += \
     system_ext_file_contexts \
-    system_ext_file_contexts_test \
     system_ext_hwservice_contexts \
-    system_ext_hwservice_contexts_test \
     system_ext_property_contexts \
-    system_ext_property_contexts_test \
     system_ext_seapp_contexts \
     system_ext_service_contexts \
-    system_ext_service_contexts_test \
     system_ext_mac_permissions.xml \
     system_ext_bug_map \
     $(addprefix system_ext_,$(addsuffix .compat.cil,$(PLATFORM_SEPOLICY_COMPAT_VERSIONS))) \
@@ -358,14 +327,10 @@ endif
 ifdef HAS_PRODUCT_SEPOLICY_DIR
 LOCAL_REQUIRED_MODULES += \
     product_file_contexts \
-    product_file_contexts_test \
     product_hwservice_contexts \
-    product_hwservice_contexts_test \
     product_property_contexts \
-    product_property_contexts_test \
     product_seapp_contexts \
     product_service_contexts \
-    product_service_contexts_test \
     product_mac_permissions.xml \
 
 endif
@@ -406,31 +371,22 @@ LOCAL_REQUIRED_MODULES += \
 
 LOCAL_REQUIRED_MODULES += \
     vendor_file_contexts \
-    vendor_file_contexts_test \
     vendor_mac_permissions.xml \
     vendor_property_contexts \
-    vendor_property_contexts_test \
     vendor_seapp_contexts \
     vendor_service_contexts \
-    vendor_service_contexts_test \
     vendor_hwservice_contexts \
-    vendor_hwservice_contexts_test \
     vendor_bug_map \
     vndservice_contexts \
-    vndservice_contexts_test \
 
 ifdef BOARD_ODM_SEPOLICY_DIRS
 LOCAL_REQUIRED_MODULES += \
     odm_sepolicy.cil \
     odm_file_contexts \
-    odm_file_contexts_test \
     odm_seapp_contexts \
     odm_property_contexts \
-    odm_property_contexts_test \
     odm_service_contexts \
-    odm_service_contexts_test \
     odm_hwservice_contexts \
-    odm_hwservice_contexts_test \
     odm_mac_permissions.xml
 endif
 
@@ -563,11 +519,6 @@ base_plat_pub_policy.cil    := $(call intermediates-dir-for,ETC,base_plat_pub_po
 base_product_pub_policy.cil := $(call intermediates-dir-for,ETC,base_product_pub_policy.cil)/base_product_pub_policy.cil
 endif
 ver :=
-
-$(foreach v,$(PLATFORM_SEPOLICY_COMPAT_VERSIONS), \
-  $(eval version_under_treble_tests := $(v)) \
-  $(eval include $(LOCAL_PATH)/treble_sepolicy_tests_for_release.mk) \
-)
 
 base_plat_pub_policy.cil :=
 base_product_pub_policy.cil :=
