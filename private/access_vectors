@@ -139,6 +139,7 @@ common cap2
 	block_suspend
 	audit_read
 	perfmon
+	bpf
 }
 
 #
